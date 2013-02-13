@@ -185,6 +185,14 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public string AssemblyQualifiedName {
+			get {
+				var qualified_name = TypeParser.ToParseable (this);
+				var definition = Resolve ();
+				return qualified_name + ", " + definition.Module.Assembly.FullName;
+			}
+		}
+
 		public virtual bool IsByReference {
 			get { return false; }
 		}
