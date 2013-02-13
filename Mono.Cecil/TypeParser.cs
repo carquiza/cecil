@@ -443,19 +443,11 @@ namespace Mono.Cecil {
 
 		static void AppendType (TypeReference type, StringBuilder name, bool fq_name, bool top_level)
 		{
-			var declaring_type = type.DeclaringType;
-			if (declaring_type != null) {
-				AppendType (declaring_type, name, false, top_level);
-				name.Append ('+');
-			}
-
-			var @namespace = type.Namespace;
-			if (!string.IsNullOrEmpty (@namespace)) {
-				name.Append (@namespace);
-				name.Append ('.');
-			}
-
-			name.Append (type.GetElementType ().Name);
+			var element_type = type.GetElementType ();
+			if (!ReferenceEquals (type, element_type))
+				AppendTypeName (element_type, name, top_level);
+			else
+				AppendTypeName (type, name, top_level);
 
 			if (!fq_name)
 				return;
@@ -469,7 +461,24 @@ namespace Mono.Cecil {
 			}
 		}
 
-		static string GetScopeFullName (TypeReference type)
+		static void AppendTypeName(TypeReference type, StringBuilder name, bool top_level)
+		{
+			var declaring_type = type.DeclaringType;
+			if (declaring_type != null) {
+				AppendType (declaring_type, name, false, top_level);
+				name.Append ('+');
+			}
+
+			var @namespace = type.Namespace;
+			if (!string.IsNullOrEmpty (@namespace)) {
+				name.Append (@namespace);
+				name.Append ('.');
+			}
+
+			name.Append (type.Name);
+		}
+		
+		static string GetScopeFullName(TypeReference type)
 		{
 			var scope = type.Scope;
 			switch (scope.MetadataScopeType) {

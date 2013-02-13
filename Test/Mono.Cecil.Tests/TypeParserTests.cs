@@ -390,5 +390,30 @@ namespace Mono.Cecil.Tests {
 			Assert.AreEqual ("System", argument.Namespace);
 			Assert.AreEqual ("Int32", argument.Name);
 		}
+
+		public class WithArrayField {
+			public Bar NonArrayField;
+			public Bar[] ArrayField;
+		}
+
+		/// <summary>
+		/// Make sure that <see cref="TypeParser.ToParseable"/> creates a correctly qualified
+		/// name for array type references.
+		/// </summary>
+		[Test]
+		public void ArrayTypeReferenceToParseable()
+		{
+			var module = GetCurrentModule ();
+			var type = module.GetType ("Mono.Cecil.Tests.TypeParserTests/WithArrayField");
+			
+			var non_array_field = type.Fields [0];
+			var array_field = type.Fields [1];
+
+			var non_array_field_type = TypeParser.ToParseable (non_array_field.FieldType);
+			var array_field_type = TypeParser.ToParseable (array_field.FieldType);
+
+			Assert.That (non_array_field_type, Is.EqualTo ("Mono.Cecil.Tests.TypeParserTests+Bar"));
+			Assert.That (array_field_type, Is.EqualTo ("Mono.Cecil.Tests.TypeParserTests+Bar[]"));
+		}
 	}
 }
