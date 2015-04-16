@@ -32,6 +32,7 @@ using System.IO;
 using System.Text;
 
 using Mono.Collections.Generic;
+using Mono.Cecil.Cil;
 
 namespace Mono.Cecil {
 
@@ -80,7 +81,7 @@ namespace Mono.Cecil {
 
 	public abstract class BaseAssemblyResolver : IAssemblyResolver {
 
-		static readonly bool on_mono = Type.GetType ("Mono.Runtime") != null;
+		static readonly bool on_mono = EnvironmentChecker.IsMono();
 
 		readonly Collection<string> directories;
 

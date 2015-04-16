@@ -177,9 +177,21 @@ namespace Mono.Cecil.Cil {
 		ISymbolReader GetSymbolReader (ModuleDefinition module, Stream symbolStream);
 	}
 
+    public class EnvironmentChecker
+    {
+        public static bool IsMono()
+        {
+#if FORCE_MDB
+            return true;
+#else
+            return Type.GetType("Mono.Runtime") != null;
+#endif
+        }
+    }
+
 	static class SymbolProvider {
 
-		static readonly string symbol_kind = Type.GetType ("Mono.Runtime") != null ? "Mdb" : "Pdb";
+		static readonly string symbol_kind = EnvironmentChecker.IsMono() ? "Mdb" : "Pdb";
 
 		static SR.AssemblyName GetPlatformSymbolAssemblyName ()
 		{

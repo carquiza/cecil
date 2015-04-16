@@ -394,8 +394,13 @@ namespace Mono.CompilerServices.SymbolWriter
 		MonoSymbolFile (string filename)
 		{
 			this.FileName = filename;
-			FileStream stream = new FileStream (filename, FileMode.Open, FileAccess.Read);
-			reader = new MyBinaryReader (stream);
+#if FORCE_READ_ONLY
+            MemoryStream stream = new MemoryStream(File.ReadAllBytes(filename));
+#else
+            FileStream stream = new FileStream(filename, FileMode.Open, FileAccess.Read);
+#endif
+
+            reader = new MyBinaryReader (stream);
 
 			try {
 				long magic = reader.ReadInt64 ();
